@@ -1,7 +1,6 @@
 import express from "express";
 import authRoute from "./features/auth/auth.route";
 import userRoute from "./features/user/user.route";
-import { errorHandler } from "./shared/errorHandler.error";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,7 +23,7 @@ app.use("/user", userRoute);
 //   res.send("Express + TypeScript Server is running!");
 // });
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
