@@ -13,6 +13,8 @@ import {
   sendSuccess,
   SuccessCode,
 } from "../../shared/errorCode";
+import { jwtService } from "../../shared/jwt";
+import logger from "../../shared/logger";
 
 class AuthController {
   async register(req: Request, res: Response): Promise<void> {
@@ -21,6 +23,7 @@ class AuthController {
     try {
       const registerParseRes = RegistrationSchema.safeParse(registrationInfo);
       if (!registerParseRes.success) {
+        logger.error(registerParseRes);
         sendError(
           res,
           "Invalid credentials",
@@ -105,7 +108,22 @@ class AuthController {
         return;
       }
 
-      sendSuccess(res, null, "Logined successful!", SuccessCode.LOGIN_SUCCESS);
+      const accessToken = jwtService.generateAccessToken(user.id);
+      const refreshToken = jwtService.generateRefreshToken(user.id);
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        path: "/api/auth/refresh",
+      });
+
+      sendSuccess(
+        res,
+        { accessToken },
+        "Logined successful!",
+        SuccessCode.LOGIN_SUCCESS,
+      );
       return;
     } catch (error) {
       console.log(error);

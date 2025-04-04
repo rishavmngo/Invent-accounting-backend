@@ -15,7 +15,7 @@ class UserRepository extends BaseRepository {
   }
 
   async findAll() {
-    const query = `SELECT * FROM ${this.table}`;
+    const query = `SELECT id,name,email,created_at FROM ${this.table}`;
 
     const { rows } = await this.db.query(query);
 

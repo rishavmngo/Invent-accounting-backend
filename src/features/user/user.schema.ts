@@ -5,3 +5,5 @@ export const UserSchema = z.object({
   email: z.string().email("Invalid email format"),
   password: z.string().min(8, "Password must contain at least 8 characters"),
 });
+
+export type USER = z.infer<typeof UserSchema>;

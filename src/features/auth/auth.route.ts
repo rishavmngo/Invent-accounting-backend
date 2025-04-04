@@ -10,6 +10,11 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/register", authController.register);
-router.get("/login", authController.login);
+router.post("/login", authController.login);
+router.get("/refresh", (req, res) => {
+  console.log(req.cookies);
+  // console.log(req.cookies.refreshToken);
+  res.send("hello");
+});
 
 export default router;
