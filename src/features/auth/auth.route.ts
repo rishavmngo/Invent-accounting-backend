@@ -6,7 +6,7 @@ import { authController } from "./auth.controller";
 const router = Router();
 
 router.get("/", (req: Request, res: Response) => {
-  res.send("Hello world");
+  res.send("Invent API: Route for authenticating users");
 });
 
 router.post("/register", authController.register);
