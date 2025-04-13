@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { PartyFormSchema } from "./party.schema";
 import logger from "../../shared/logger";
-import { ErrorCode, sendSuccess, SuccessCode } from "../../shared/errorCode";
+import { sendSuccess, SuccessCode } from "../../shared/errorCode";
 import { partyService } from "./party.service";
-import { AppError } from "../../shared/appError.error";
+import { ValidationError } from "../../shared/execeptions/ValidationError";
+import { ZodError } from "zod";
+import { formatZodError } from "../../shared/helper";
 
 class PartyController {
   async addNewParty(
@@ -12,18 +14,9 @@ class PartyController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const partyFormParsedRes = PartyFormSchema.safeParse(req.body);
+      const partyFormData = PartyFormSchema.parse(req.body);
 
-      if (!partyFormParsedRes.success) {
-        logger.error(partyFormParsedRes);
-
-        throw new AppError(
-          "Invalid credentials",
-          400,
-          ErrorCode.INVALID_CREDENTIALS,
-        );
-      }
-      const partyId = await partyService.add(partyFormParsedRes.data);
+      const partyId = await partyService.add(partyFormData);
 
       sendSuccess(
         res,
@@ -33,9 +26,12 @@ class PartyController {
       );
       return;
     } catch (error) {
-      console.log(error);
       logger.error(error);
-      next(error);
+      if (error instanceof ZodError) {
+        next(new ValidationError(formatZodError(error)));
+      } else {
+        next(error);
+      }
     }
   }
 }

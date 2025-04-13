@@ -23,10 +23,18 @@ class PartyRepository extends BaseRepository {
       const query = `INSERT INTO party(${res.keys.join(",")}) VALUES(${res.placeholder}) returning id`;
 
       const { rows } = await this.db.query(query, res.values);
+
+      if (rows.length < 1) {
+        throw new AppError(
+          "Adding party failed!",
+          400,
+          ErrorCode.PARTY_ADD_FAILED,
+        );
+      }
       const id = rows[0].id;
 
       if (party["opening_balance"]) {
-        let tranType = "party_o_reduc";
+        let tranType = "party_o_reduce";
 
         if (party["receivable"]) {
           tranType = "party_o_add";
@@ -45,7 +53,11 @@ class PartyRepository extends BaseRepository {
     } catch (error) {
       logger.error(error);
       await this.db.query("ROLLBACK");
-      throw new AppError("Transaction failed", 400, ErrorCode.UNEXPECTED_ERROR);
+      throw new AppError(
+        "Error occured in DB while adding a party",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
     }
   }
 }

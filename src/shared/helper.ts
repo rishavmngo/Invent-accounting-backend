@@ -1,3 +1,5 @@
+import { ZodError } from "zod";
+
 export function prepareInsertParts<T extends object>(
   obj: T,
   exclude: (keyof T)[] = [],
@@ -11,4 +13,14 @@ export function prepareInsertParts<T extends object>(
 
   const placeholder = keys.map((_, index) => `$${index + 1}`).join(",");
   return { keys, values, placeholder };
+}
+
+export function formatZodError(error: ZodError) {
+  return error.errors
+    .map((e) => {
+      const field = e.path.join(".");
+      const message = e.message;
+      return `${field}: ${message}`;
+    })
+    .join("; ");
 }

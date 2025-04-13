@@ -1,5 +1,5 @@
 import BaseRepository from "../../shared/base.repository";
-import { DatabaseError } from "../../shared/customError.error";
+import { DatabaseError } from "../../shared/execeptions/DatabaseError";
 import { RegistrationInfo } from "../auth/auth.schema";
 
 class UserRepository extends BaseRepository {
