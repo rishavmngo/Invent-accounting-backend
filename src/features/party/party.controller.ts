@@ -1,29 +1,27 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { PartyFormSchema } from "./party.schema";
 import logger from "../../shared/logger";
-import {
-  ErrorCode,
-  sendError,
-  sendSuccess,
-  SuccessCode,
-} from "../../shared/errorCode";
+import { ErrorCode, sendSuccess, SuccessCode } from "../../shared/errorCode";
 import { partyService } from "./party.service";
+import { AppError } from "../../shared/appError.error";
 
 class PartyController {
-  async addNewParty(req: Request, res: Response): Promise<void> {
+  async addNewParty(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const partyFormParsedRes = PartyFormSchema.safeParse(req.body);
 
       if (!partyFormParsedRes.success) {
         logger.error(partyFormParsedRes);
 
-        sendError(
-          res,
+        throw new AppError(
           "Invalid credentials",
-          ErrorCode.INVALID_CREDENTIALS,
           400,
+          ErrorCode.INVALID_CREDENTIALS,
         );
-        return;
       }
       const partyId = await partyService.add(partyFormParsedRes.data);
 
@@ -36,13 +34,8 @@ class PartyController {
       return;
     } catch (error) {
       console.log(error);
-      sendError(
-        res,
-        "Unexpected Error occured!",
-        ErrorCode.UNEXPECTED_ERROR,
-        500,
-      );
-      return;
+      logger.error(error);
+      next(error);
     }
   }
 }

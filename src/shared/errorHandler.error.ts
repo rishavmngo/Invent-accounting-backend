@@ -1,19 +1,29 @@
-// import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
-// import { CustomError } from "./customError.error";
-//
-// export const errorHandler: ErrorRequestHandler = (
-//   error: Error,
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   if (error instanceof CustomError) {
-//     res.status(error.statusCode).json(error.serialize());
-//     return;
-//   }
-//
-//   res.status(500).json({
-//     message: "Something went wrong",
-//     error: error.message,
-//   });
-// };
+import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
+import { AppError } from "./appError.error";
+import logger from "./logger";
+
+export const errorHandler: ErrorRequestHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (err instanceof AppError) {
+    if (err.isOperational) {
+      res.status(err.statusCode).json({
+        success: false,
+        code: err.code,
+        message: err.message,
+      });
+      return;
+    }
+  }
+
+  logger.error("Unhandled error:", err);
+
+  res.status(500).json({
+    success: false,
+    code: "SERVER_ERROR",
+    message: "Something went wrong!",
+  });
+};

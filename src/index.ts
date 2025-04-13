@@ -6,6 +6,7 @@ import { configureJwtStrategy } from "./shared/jwtStrategy";
 import passport from "passport";
 import morgan from "morgan";
 import logger from "./shared/logger";
+import { errorHandler } from "./shared/errorHandler.error";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,6 +28,8 @@ app.use("/auth", authRoute);
 app.use("/user", passport.authenticate("jwt", { session: false }), userRoute);
 
 app.use("/party", passport.authenticate("jwt", { session: false }), partyRoute);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
