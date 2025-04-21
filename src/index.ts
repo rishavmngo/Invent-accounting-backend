@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import authRoute from "./features/auth/auth.route";
 import userRoute from "./features/user/user.route";
 import partyRoute from "./features/party/party.route";
@@ -10,6 +11,12 @@ import { errorHandler } from "./shared/errorHandler.error";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+const corsOptions = {
+  origin: "*",
+};
+
+app.use(cors(corsOptions));
 
 app.use(
   morgan("combined", {
