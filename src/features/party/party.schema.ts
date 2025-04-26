@@ -16,7 +16,7 @@ export const PartySchema = z.object({
   name: z.string(),
   contact_number: z.string().optional(),
   billing_address: z.string().optional(),
-  email_address: z.string().email().optional(),
+  email_address: z.string().email().or(z.literal("")).optional(),
   state: z.string().optional(),
   gst_type: z.string().optional(),
   gstin: z.string().length(15).optional(),
