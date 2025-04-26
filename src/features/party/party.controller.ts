@@ -16,6 +16,8 @@ class PartyController {
     try {
       const partyFormData = PartyFormSchema.parse(req.body);
 
+      console.log(partyFormData);
+
       const partyId = await partyService.add(partyFormData);
 
       sendSuccess(

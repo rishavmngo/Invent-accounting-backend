@@ -12,6 +12,7 @@ const zodDate = z.preprocess((arg) => {
 
 export const PartySchema = z.object({
   id: z.number(),
+  user_id: z.number(),
   name: z.string(),
   contact_number: z.string().optional(),
   billing_address: z.string().optional(),

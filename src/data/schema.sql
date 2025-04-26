@@ -12,22 +12,27 @@ CREATE TYPE stock_transaction_type AS ENUM ('add', 'reduce', 'sale', 'purchase',
 
 CREATE TABLE party(
 id serial PRIMARY KEY,
+user_id integer NOT NULL,
 name VARCHAR (50) NOT NULL,
 contact_number VARCHAR(15),
 billing_address VARCHAR(100),
 email_address VARCHAR(100),
 state VARCHAR(25),
-gst_type VARCHAR(15),
+gst_type VARCHAR(100),
 gstin VARCHAR(15),
 credit_limit int,
 created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-updated_at TIMESTAMP
+updated_at TIMESTAMP,
+CONSTRAINT fk_user_party
+	FOREIGN KEY(user_id)
+	REFERENCES users(id)
+	ON DELETE CASCADE 
 )
 
 
 CREATE TABLE party_opening_balance(
 id serial PRIMARY KEY,
-party_id integer,
+party_id integer NOT NULL,
 TYPE stock_transaction_type NOT NULL,
 amount INT NOT NULL,
 as_of_date TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -38,6 +43,3 @@ CONSTRAINT fk_party_opening_balance
 	REFERENCES party(id)
 	ON DELETE CASCADE 
 )
-
-
-

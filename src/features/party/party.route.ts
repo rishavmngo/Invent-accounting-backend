@@ -8,5 +8,7 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/add", partyController.addNewParty);
+router.post("/delete", partyController.addNewParty);
+router.post("/update", partyController.addNewParty);
 
 export default router;

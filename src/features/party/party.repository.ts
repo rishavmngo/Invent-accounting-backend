@@ -10,6 +10,10 @@ class PartyRepository extends BaseRepository {
     super("party");
   }
 
+  // async getAllCustomersCardData(userId) {
+  //   const query = `SELECT * FROM party WHERE`;
+  // }
+
   async insert(party: NewPartyT) {
     try {
       await this.db.query("BEGIN");
