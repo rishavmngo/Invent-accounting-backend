@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BaseSchema } from "../../shared/types";
 
 const zodDate = z.preprocess((arg) => {
   if (typeof arg === "string" || arg instanceof Date) {
@@ -10,9 +11,7 @@ const zodDate = z.preprocess((arg) => {
   return undefined; // This will trigger the error for invalid dates
 }, z.date());
 
-export const PartySchema = z.object({
-  id: z.number(),
-  user_id: z.number(),
+export const PartySchema = BaseSchema.extend({
   name: z.string(),
   contact_number: z.string().optional(),
   billing_address: z.string().optional(),
@@ -21,8 +20,6 @@ export const PartySchema = z.object({
   gst_type: z.string().optional(),
   gstin: z.string().length(15).optional(),
   credit_limit: z.number().optional(),
-  created_at: z.date().optional(),
-  updated_at: z.date().optional(),
 });
 
 export const newPartySchema = PartySchema.omit({

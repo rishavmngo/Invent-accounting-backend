@@ -3,16 +3,57 @@ import BaseRepository from "../../shared/base.repository";
 import { ErrorCode } from "../../shared/errorCode";
 import { prepareInsertParts } from "../../shared/helper";
 import logger from "../../shared/logger";
-import { NewPartyT } from "./party.schema";
+import { NewPartyT, PartyT } from "./party.schema";
 
 class PartyRepository extends BaseRepository {
   constructor() {
     super("party");
   }
 
-  // async getAllCustomersCardData(userId) {
-  //   const query = `SELECT * FROM party WHERE`;
-  // }
+  async getPartyById(userId: number, partyId: number): Promise<PartyT> {
+    try {
+      const query = `SELECT * FROM party WHERE user_id=$1 AND id=$2`;
+
+      const res = await this.db.query(query, [userId, partyId]);
+      console.log(res.rows[0]);
+
+      if (res.rows.length < 1) {
+        throw new AppError(
+          "Can't able to find party",
+          400,
+          ErrorCode.PARTY_ADD_FAILED,
+        );
+      }
+
+      return res.rows[0];
+    } catch (error) {
+      logger.error(error);
+
+      throw new AppError(
+        "Error occured in DB while fetching  party by Id!",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
+
+  async getAllPartiesCardData(userId: number): Promise<PartyT[]> {
+    try {
+      const query = `SELECT * FROM party WHERE user_id=$1`;
+
+      const { rows } = await this.db.query(query, [userId]);
+
+      return rows;
+    } catch (error) {
+      logger.error(error);
+
+      throw new AppError(
+        "Error occured in DB while fetching  party card data!",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
 
   async insert(party: NewPartyT) {
     try {
