@@ -13,7 +13,6 @@ router.get("/", (req: Request, res: Response) => {
 router.post("/register", authController.register);
 router.post("/login", authController.login);
 router.get("/refresh", (req, res) => {
-  console.log(req.cookies);
   // console.log(req.cookies.refreshToken);
   res.send("hello");
 });
