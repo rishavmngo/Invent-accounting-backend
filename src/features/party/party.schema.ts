@@ -1,18 +1,19 @@
 import { z } from "zod";
-import { BaseSchema } from "../../shared/types";
+import { BaseSchema, zodDate } from "../../shared/types";
 
-const zodDate = z.preprocess((arg) => {
-  if (typeof arg === "string" || arg instanceof Date) {
-    const parsed = new Date(arg);
-    if (!isNaN(parsed.getTime())) {
-      return parsed;
-    }
-  }
-  return undefined; // This will trigger the error for invalid dates
-}, z.date());
+// const zodDate = z.preprocess((arg) => {
+//   if (typeof arg === "string" || arg instanceof Date) {
+//     const parsed = new Date(arg);
+//     if (!isNaN(parsed.getTime())) {
+//       return parsed;
+//     }
+//   }
+//   return undefined;
+// }, z.date());
 
 export const PartySchema = BaseSchema.extend({
   name: z.string(),
+  user_id: z.number(),
   contact_number: z.string().optional(),
   billing_address: z.string().optional(),
   email_address: z.string().email().or(z.literal("")).optional(),

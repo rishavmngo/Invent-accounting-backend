@@ -4,18 +4,22 @@ import { ErrorCode } from "../../shared/errorCode";
 import { prepareInsertParts } from "../../shared/helper";
 import logger from "../../shared/logger";
 import { NewPartyT, PartyT } from "./party.schema";
+import { DbClient } from "../../shared/types";
 
 class PartyRepository extends BaseRepository {
   constructor() {
     super("party");
   }
 
-  async getPartyById(userId: number, partyId: number): Promise<PartyT> {
+  async getPartyById(
+    userId: number,
+    partyId: number,
+    db: DbClient,
+  ): Promise<PartyT> {
     try {
       const query = `SELECT * FROM party WHERE user_id=$1 AND id=$2`;
 
-      const res = await this.db.query(query, [userId, partyId]);
-      console.log(res.rows[0]);
+      const res = await db.query(query, [userId, partyId]);
 
       if (res.rows.length < 1) {
         throw new AppError(
@@ -37,11 +41,11 @@ class PartyRepository extends BaseRepository {
     }
   }
 
-  async getAllPartiesCardData(userId: number): Promise<PartyT[]> {
+  async getAllPartiesCardData(userId: number, db: DbClient): Promise<PartyT[]> {
     try {
       const query = `SELECT * FROM party WHERE user_id=$1`;
 
-      const { rows } = await this.db.query(query, [userId]);
+      const { rows } = await db.query(query, [userId]);
 
       return rows;
     } catch (error) {
@@ -55,9 +59,9 @@ class PartyRepository extends BaseRepository {
     }
   }
 
-  async insert(party: NewPartyT) {
+  async insert(party: NewPartyT, db: DbClient) {
     try {
-      await this.db.query("BEGIN");
+      await db.query("BEGIN");
 
       const res = prepareInsertParts(party, [
         "opening_balance",
@@ -67,7 +71,7 @@ class PartyRepository extends BaseRepository {
 
       const query = `INSERT INTO party(${res.keys.join(",")}) VALUES(${res.placeholder}) returning id`;
 
-      const { rows } = await this.db.query(query, res.values);
+      const { rows } = await db.query(query, res.values);
 
       if (rows.length < 1) {
         throw new AppError(
@@ -86,7 +90,7 @@ class PartyRepository extends BaseRepository {
         }
         const query2 = `INSERT INTO party_opening_balance(party_id,type,amount,as_of_date) VALUES($1,$2,$3,$4) returning id`;
 
-        await this.db.query(query2, [
+        await db.query(query2, [
           id,
           tranType,
           party["opening_balance"],
@@ -94,10 +98,10 @@ class PartyRepository extends BaseRepository {
         ]);
       }
 
-      await this.db.query("COMMIT");
+      await db.query("COMMIT");
     } catch (error) {
       logger.error(error);
-      await this.db.query("ROLLBACK");
+      await db.query("ROLLBACK");
       throw new AppError(
         "Error occured in DB while adding a party",
         400,

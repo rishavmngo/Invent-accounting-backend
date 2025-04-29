@@ -1,17 +1,21 @@
+import BaseService from "../../shared/base.service";
 import { partyRepository } from "./party.repository";
 import { NewPartyT, PartyT } from "./party.schema";
 
-class PartyService {
+class PartyService extends BaseService {
   async add(newParty: NewPartyT) {
-    return partyRepository.insert(newParty);
+    const db = this.db;
+    return partyRepository.insert(newParty, db);
   }
 
   async getAllPartyCard(userId: number): Promise<PartyT[]> {
-    return partyRepository.getAllPartiesCardData(userId);
+    const db = this.db;
+    return partyRepository.getAllPartiesCardData(userId, db);
   }
 
   async getById(userId: number, partyId: number): Promise<PartyT> {
-    return partyRepository.getPartyById(userId, partyId);
+    const db = this.db;
+    return partyRepository.getPartyById(userId, partyId, db);
   }
 }
 

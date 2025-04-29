@@ -45,7 +45,6 @@ class PartyController {
       const partyFormData = PartyFormSchema.parse(req.body);
 
       // This user_id need to check the user_id must equal to user_id in token
-      console.log(partyFormData);
 
       const partyId = await partyService.add(partyFormData);
 
@@ -73,8 +72,6 @@ class PartyController {
   ): Promise<void> {
     try {
       const { user_id } = req.body;
-
-      console.log(req.body);
 
       //if ther user_id is sent by admin
 
