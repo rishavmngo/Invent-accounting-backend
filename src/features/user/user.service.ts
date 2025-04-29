@@ -1,36 +1,42 @@
+import BaseService from "../../shared/base.service";
+import logger from "../../shared/logger";
 import { RegistrationInfo } from "../auth/auth.schema";
 import { userRepository } from "./user.repository";
 
-class UserService {
+class UserService extends BaseService {
   async getUserById(id: string) {
+    const db = this.db;
     try {
-      const res = await userRepository.findById(id);
+      const res = await userRepository.findById(id, db);
       return res;
     } catch (error) {
-      console.log(error);
+      logger.info(error);
     }
   }
 
   async getAllUsers() {
+    const db = this.db;
     try {
-      const res = await userRepository.findAll();
+      const res = await userRepository.findAll(db);
       return res;
     } catch (error) {
-      console.log(error);
+      logger.info(error);
     }
   }
 
   async getUserByEmail(email: string) {
+    const db = this.db;
     try {
-      const res = await userRepository.findByEmail(email);
+      const res = await userRepository.findByEmail(email, db);
       return res;
     } catch (error) {
-      console.log(error);
+      logger.info(error);
     }
   }
 
   async addUser(user: RegistrationInfo) {
-    return await userRepository.insertUser(user);
+    const db = this.db;
+    return await userRepository.insertUser(user, db);
   }
 }
 
