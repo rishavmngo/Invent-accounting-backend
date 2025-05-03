@@ -8,7 +8,7 @@ import { ItemInput } from "./inventory.schema";
 
 class InventoryRepository extends BaseRepository {
   constructor() {
-    super("party");
+    super("item");
   }
 
   async insert(item: ItemInput, db: DbClient) {
@@ -34,6 +34,23 @@ class InventoryRepository extends BaseRepository {
         "Error occured in DB while adding a item",
         400,
         ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
+
+  async findAllCardData(userId: number, db: DbClient) {
+    try {
+      const query = `SELECT * FROM ${this.table} WHERE user_id=$1`;
+
+      const { rows } = await db.query(query, [userId]);
+
+      return rows;
+    } catch (error) {
+      logger.error(error);
+      throw new AppError(
+        "Failed to fetch All items of a user from inventory",
+        400,
+        ErrorCode.CONFLICT_ERROR,
       );
     }
   }

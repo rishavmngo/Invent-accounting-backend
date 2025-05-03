@@ -4,7 +4,9 @@ import { ValidationError } from "../../shared/execeptions/ValidationError";
 import { formatZodError } from "../../shared/helper";
 import { ZodError } from "zod";
 import { inventoryService } from "./inventory.service";
-import { sendSuccess, SuccessCode } from "../../shared/errorCode";
+import { ErrorCode, sendSuccess, SuccessCode } from "../../shared/errorCode";
+import logger from "../../shared/logger";
+import { AppError } from "../../shared/appError.error";
 
 class InventoryController {
   async addNewItem(
@@ -29,6 +31,37 @@ class InventoryController {
       } else {
         next(error);
       }
+    }
+  }
+
+  async getAllCardData(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { user_id } = req.body;
+
+      if (!user_id) {
+        throw new AppError(
+          "Missing field: user_id",
+          400,
+          ErrorCode.CONFLICT_ERROR,
+        );
+      }
+
+      const items = await inventoryService.getAllCardData(user_id);
+
+      sendSuccess(
+        res,
+        items,
+        "Items fetched successfully!",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      next(error);
     }
   }
 }

@@ -6,6 +6,10 @@ import { inventoryRepository } from "./inventory.repository";
 import { ItemForm, ItemInputSchema } from "./inventory.schema";
 
 class InventoryService extends BaseService {
+  async getAllCardData(userId: number) {
+    const db = this.db;
+    return await inventoryRepository.findAllCardData(userId, db);
+  }
   async add(newItemForm: ItemForm) {
     const newItem = ItemInputSchema.parse(newItemForm);
     const stock = { ...newItemForm };
