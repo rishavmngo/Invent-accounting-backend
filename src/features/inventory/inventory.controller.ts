@@ -9,6 +9,43 @@ import logger from "../../shared/logger";
 import { AppError } from "../../shared/appError.error";
 
 class InventoryController {
+  async getItemById(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { user_id, item_id } = req.body;
+      if (!user_id || !item_id) {
+        throw new AppError(
+          "Missing id of the item",
+          400,
+          ErrorCode.VALIDATION_ERROR,
+        );
+      }
+      const item = await inventoryService.getById(user_id, item_id);
+
+      if (!item) {
+        throw new AppError(
+          `Item with id: ${item_id} not found`,
+          404,
+          ErrorCode.NOT_FOUND,
+        );
+      }
+
+      sendSuccess(
+        res,
+        item,
+        "Successfully fetched item by id",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  }
+
   async addNewItem(
     req: Request,
     res: Response,

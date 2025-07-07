@@ -10,6 +10,26 @@ class InventoryService extends BaseService {
     const db = this.db;
     return await inventoryRepository.findAllCardData(userId, db);
   }
+
+  async getById(userId: number, itemId: number) {
+    const db = this.db;
+    try {
+      const item = await inventoryRepository.getById(userId, itemId, db);
+
+      const quantity = await inventoryRepository.getTotalQuantityById(
+        itemId,
+        db,
+      );
+
+      item.quantity = parseInt(quantity);
+
+      return item;
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
+
   async add(newItemForm: ItemForm) {
     const newItem = ItemInputSchema.parse(newItemForm);
     const stock = { ...newItemForm };
