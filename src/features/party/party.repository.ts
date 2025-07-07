@@ -25,7 +25,7 @@ class PartyRepository extends BaseRepository {
         throw new AppError(
           "Can't able to find party",
           400,
-          ErrorCode.PARTY_ADD_FAILED,
+          ErrorCode.NOT_FOUND,
         );
       }
 
