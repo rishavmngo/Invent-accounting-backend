@@ -8,11 +8,11 @@ export const ItemInputSchema = z.object({
   category: z.string().optional(),
   description: z.string().optional(),
   hsn_code: z.string().optional(),
-  sale_price: z.number().optional(),
-  purchase_price: z.number().optional(),
-  discount: z.number().optional(),
-  tax_rate: z.string().optional(),
-  min_stock_qty: z.number().optional(),
+  sale_price: z.number().optional().nullable(),
+  purchase_price: z.number().optional().nullable(),
+  discount: z.number().optional().nullable(),
+  tax_rate: z.string().optional().nullable(),
+  min_stock_qty: z.number().optional().nullable(),
   location: z.string().optional(),
 });
 export type ItemInput = z.infer<typeof ItemInputSchema>;

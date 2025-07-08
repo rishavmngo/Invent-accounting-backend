@@ -30,6 +30,22 @@ class InventoryService extends BaseService {
     }
   }
 
+  async delete(id: number) {
+    const db = this.db;
+    inventoryRepository.delete(id, db);
+  }
+
+  async update(id: number, item: ItemForm) {
+    try {
+      const db = this.db;
+      await inventoryRepository.update(id, item, db);
+    } catch (error) {
+      logger.error(error);
+
+      throw error;
+    }
+  }
+
   async add(newItemForm: ItemForm) {
     const newItem = ItemInputSchema.parse(newItemForm);
     const stock = { ...newItemForm };

@@ -22,7 +22,7 @@ class InventoryRepository extends BaseRepository {
 			END) AS current_quantity
 FROM 
 item_stock
-WHERE item_id = $1 
+WHERE item_id=$1 
 GROUP BY 
 item_id;`;
       const res = await db.query(query, [itemId]);
@@ -68,6 +68,36 @@ item_id;`;
     }
   }
 
+  prepareUpdateParts<T extends object>(obj: T, exclude: (keyof T)[] = []) {
+    const keys = Object.keys(obj).filter(
+      (key) => !exclude.includes(key as keyof T),
+    );
+
+    const values = keys.map((key) => obj[key as keyof T]);
+
+    const placeholder = keys
+      .map((key, index) => `${key}=$${index + 2}`)
+      .join(",");
+    return { keys, values, placeholder };
+  }
+  async update(id: number, item: ItemInput, db: DbClient) {
+    const { keys, values, placeholder } = this.prepareUpdateParts(item, [
+      "user_id",
+    ]);
+    try {
+      const query = `UPDATE item 
+                      set ${placeholder} 
+                      where id=$1
+`;
+      console.log(query);
+      console.log(keys, values, placeholder);
+      await db.query(query, [id, ...values]);
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
+
   async insert(item: ItemInput, db: DbClient) {
     try {
       const res = prepareInsertParts(item);
@@ -87,6 +117,22 @@ item_id;`;
     } catch (error) {
       logger.error(error);
 
+      throw new AppError(
+        "Error occured in DB while adding a item",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
+
+  async delete(itemId: number, db: DbClient) {
+    try {
+      // TODO: Add a field to hide instead of delete for better bookeeping
+      const query = `DELETE from item WHERE id=$1`;
+
+      await db.query(query, [itemId]);
+    } catch (error) {
+      logger.error(error);
       throw new AppError(
         "Error occured in DB while adding a item",
         400,

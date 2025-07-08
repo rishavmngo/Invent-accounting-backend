@@ -6,5 +6,6 @@ const router = Router();
 router.post("/add", inventoryController.addNewItem);
 router.post("/getAllCardData", inventoryController.getAllCardData);
 router.post("/getById", inventoryController.getItemById);
-
+router.post("/update", inventoryController.updateItem);
+router.post("/delete", inventoryController.delete);
 export default router;

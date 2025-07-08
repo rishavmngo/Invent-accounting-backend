@@ -2,13 +2,37 @@ import { NextFunction, Request, Response } from "express";
 import { ItemFormSchema } from "./inventory.schema";
 import { ValidationError } from "../../shared/execeptions/ValidationError";
 import { formatZodError } from "../../shared/helper";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import { inventoryService } from "./inventory.service";
 import { ErrorCode, sendSuccess, SuccessCode } from "../../shared/errorCode";
 import logger from "../../shared/logger";
 import { AppError } from "../../shared/appError.error";
 
 class InventoryController {
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.body;
+      if (!id) {
+        throw new AppError(
+          "Missing id of the item",
+          400,
+          ErrorCode.VALIDATION_ERROR,
+        );
+      }
+      await inventoryService.delete(id);
+      sendSuccess(
+        res,
+        {},
+        "Successfully delete item",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  }
+
   async getItemById(
     req: Request,
     res: Response,
@@ -46,6 +70,37 @@ class InventoryController {
     }
   }
 
+  async updateItem(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      console.log("before", req.body);
+      const itemFormData = ItemFormSchema.extend({ id: z.number() }).parse(
+        req.body,
+      );
+
+      const { id, ...item } = itemFormData;
+
+      console.log("after", item);
+      await inventoryService.update(id, item);
+
+      sendSuccess(
+        res,
+        {},
+        "Item updated successfully!!",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+    } catch (error) {
+      logger.error(error);
+      if (error instanceof ZodError) {
+        next(new ValidationError(formatZodError(error)));
+      } else {
+        next(error);
+      }
+    }
+  }
   async addNewItem(
     req: Request,
     res: Response,
