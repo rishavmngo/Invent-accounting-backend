@@ -28,3 +28,22 @@ export const ItemFormSchema = ItemInputSchema.extend({
 });
 
 export type ItemForm = z.infer<typeof ItemFormSchema>;
+
+export const ItemStockSchemaBase = z.object({
+  id: z.number(),
+  type: z.string(),
+  description: z.string().optional(),
+  location: z.string().optional(),
+  as_of_date: z.coerce.date().optional(),
+});
+
+export const ItemStockSchema = ItemStockSchemaBase.extend({
+  item_id: z.number(),
+  quantity: z.number(),
+  purchase_price: z.number().optional(),
+});
+
+export const ItemStockAddSchema = ItemStockSchema.omit({ id: true });
+
+export type ItemStockAddT = z.infer<typeof ItemStockAddSchema>;
+export type ItemStock = z.infer<typeof ItemStockSchema>;

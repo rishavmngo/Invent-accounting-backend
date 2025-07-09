@@ -3,9 +3,18 @@ import logger from "../../shared/logger";
 import { stockRepository } from "../stock/stock.repository";
 import { StockInput } from "../stock/stock.schema";
 import { inventoryRepository } from "./inventory.repository";
-import { ItemForm, ItemInputSchema } from "./inventory.schema";
+import { ItemForm, ItemInputSchema, ItemStockAddT } from "./inventory.schema";
 
 class InventoryService extends BaseService {
+  async adjustStock(stock: ItemStockAddT) {
+    const db = this.db;
+    return await inventoryRepository.adjustStock(stock, db);
+  }
+
+  async getAllStocks(itemId: number) {
+    const db = this.db;
+    return await inventoryRepository.getAllStocks(itemId, db);
+  }
   async getAllCardData(userId: number) {
     const db = this.db;
     return await inventoryRepository.findAllCardData(userId, db);

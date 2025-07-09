@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ItemFormSchema } from "./inventory.schema";
+import { ItemFormSchema, ItemStockAddSchema } from "./inventory.schema";
 import { ValidationError } from "../../shared/execeptions/ValidationError";
 import { formatZodError } from "../../shared/helper";
 import { z, ZodError } from "zod";
@@ -9,6 +9,58 @@ import logger from "../../shared/logger";
 import { AppError } from "../../shared/appError.error";
 
 class InventoryController {
+  async adjustStock(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      console.log(req.body);
+      const stockData = ItemStockAddSchema.parse(req.body);
+
+      await inventoryService.adjustStock(stockData);
+
+      sendSuccess(
+        res,
+        {},
+        "Stock adjusted successfully!!",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+    } catch (error) {
+      if (error instanceof ZodError) {
+        next(new ValidationError(formatZodError(error)));
+      } else {
+        next(error);
+      }
+    }
+  }
+
+  async getAllStocks(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    const { item_id } = req.body;
+
+    if (!item_id) {
+      throw new AppError("Missing item id", 400, ErrorCode.VALIDATION_ERROR);
+    }
+
+    try {
+      const stocks = await inventoryService.getAllStocks(item_id);
+
+      sendSuccess(
+        res,
+        stocks,
+        "Fetched Stock successfully",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  }
   async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.body;

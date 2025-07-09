@@ -4,11 +4,44 @@ import { ErrorCode } from "../../shared/errorCode";
 import { prepareInsertParts } from "../../shared/helper";
 import logger from "../../shared/logger";
 import { DbClient } from "../../shared/types";
-import { ItemInput } from "./inventory.schema";
+import { ItemInput, ItemStockAddT } from "./inventory.schema";
 
 class InventoryRepository extends BaseRepository {
   constructor() {
     super("item");
+  }
+
+  async adjustStock(stock: ItemStockAddT, db: DbClient) {
+    try {
+      const { keys, values, placeholder } = prepareInsertParts(stock);
+
+      const query = `INSERT INTO item_stock(${keys}) VALUES(${placeholder}) returning id`;
+      await db.query(query, values);
+    } catch (error) {
+      logger.error(error);
+      throw new AppError(
+        "Error occured in DB while adjusting stock in item_stock table",
+      );
+    }
+  }
+
+  async getAllStocks(itemId: number, db: DbClient) {
+    try {
+      const query = `SELECT * FROM item_stock where item_id=$1 ORDER BY as_of_date ASC`;
+      console.log(query, itemId);
+
+      const res = await db.query(query, [itemId]);
+
+      return res.rows;
+    } catch (error) {
+      logger.error(error);
+
+      throw new AppError(
+        "Error occured in DB while fetching all stocks of Item!",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
   }
 
   async getTotalQuantityById(itemId: number, db: DbClient) {
