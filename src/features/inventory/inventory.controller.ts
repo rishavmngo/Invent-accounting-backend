@@ -9,6 +9,37 @@ import logger from "../../shared/logger";
 import { AppError } from "../../shared/appError.error";
 
 class InventoryController {
+  async deleteStock(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { itemStockId, itemId } = req.body;
+
+      if (!itemStockId || !itemId) {
+        throw new AppError(
+          "Insufficient information",
+          400,
+          ErrorCode.VALIDATION_ERROR,
+        );
+      }
+
+      await inventoryService.deleteStock(itemStockId, itemId);
+
+      sendSuccess(
+        res,
+        {},
+        "Item's stock deleted successfully!",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  }
+
   async adjustStock(
     req: Request,
     res: Response,

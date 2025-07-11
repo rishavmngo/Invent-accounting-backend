@@ -9,6 +9,6 @@ router.post("/getById", inventoryController.getItemById);
 router.post("/update", inventoryController.updateItem);
 router.post("/delete", inventoryController.delete);
 router.post("/adjustStock", inventoryController.adjustStock);
-router.post("/deleteStock");
+router.post("/deleteStock", inventoryController.deleteStock);
 router.post("/getAllStocks", inventoryController.getAllStocks);
 export default router;

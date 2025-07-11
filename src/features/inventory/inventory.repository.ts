@@ -11,6 +11,21 @@ class InventoryRepository extends BaseRepository {
     super("item");
   }
 
+  async deleteStock(itemStockId: number, itemId: number, db: DbClient) {
+    try {
+      // TODO: Add a field to hide instead of delete for better bookeeping
+      const query = `DELETE from item_stock WHERE id=$1 AND item_id=$2`;
+
+      await db.query(query, [itemStockId, itemId]);
+    } catch (error) {
+      logger.error(error);
+      throw new AppError(
+        "Error occured in DB while deleting a item's stock",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
   async adjustStock(stock: ItemStockAddT, db: DbClient) {
     try {
       const { keys, values, placeholder } = prepareInsertParts(stock);
