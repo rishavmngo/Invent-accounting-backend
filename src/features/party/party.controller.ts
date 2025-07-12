@@ -26,7 +26,6 @@ class PartyController {
       }
 
       const party = await partyService.suggestion(query);
-      console.log("party", party);
 
       sendSuccess(
         res,

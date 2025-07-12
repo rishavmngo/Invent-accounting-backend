@@ -13,10 +13,9 @@ class PartyRepository extends BaseRepository {
 
   async suggestion(word: string, db: DbClient) {
     try {
-      console.log(word);
-      word = word.split(" ").join("_");
-      word = word + ":*";
       const query = `SELECT * FROM party WHERE to_tsvector('english', name || ' ' || billing_address) @@ to_tsquery('english', $1)`;
+
+      word = word.split(" ").join("_") + ":*";
 
       const { rows } = await db.query(query, [word]);
 
