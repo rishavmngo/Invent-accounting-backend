@@ -9,6 +9,37 @@ import { formatZodError } from "../../shared/helper";
 import { AppError } from "../../shared/appError.error";
 
 class PartyController {
+  async suggestion(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { query } = req.body;
+
+      if (!query) {
+        throw new AppError(
+          "Missing field: query",
+          400,
+          ErrorCode.CONFLICT_ERROR,
+        );
+      }
+
+      const party = await partyService.suggestion(query);
+      console.log("party", party);
+
+      sendSuccess(
+        res,
+        party,
+        "Successfully fetched party suggestions ",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  }
   async getPartyById(
     req: Request,
     res: Response,

@@ -3,6 +3,10 @@ import { partyRepository } from "./party.repository";
 import { NewPartyT, PartyT } from "./party.schema";
 
 class PartyService extends BaseService {
+  async suggestion(query: string) {
+    const db = this.db;
+    return await partyRepository.suggestion(query, db);
+  }
   async add(newParty: NewPartyT) {
     const db = this.db;
     return partyRepository.insert(newParty, db);

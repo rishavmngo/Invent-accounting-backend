@@ -11,6 +11,27 @@ class PartyRepository extends BaseRepository {
     super("party");
   }
 
+  async suggestion(word: string, db: DbClient) {
+    try {
+      console.log(word);
+      word = word.split(" ").join("_");
+      word = word + ":*";
+      const query = `SELECT * FROM party WHERE to_tsvector('english', name || ' ' || billing_address) @@ to_tsquery('english', $1)`;
+
+      const { rows } = await db.query(query, [word]);
+
+      return rows;
+    } catch (error) {
+      logger.error(error);
+
+      throw new AppError(
+        "Error occured in DB while fetching party suggestions!",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
+
   async getPartyById(
     userId: number,
     partyId: number,
