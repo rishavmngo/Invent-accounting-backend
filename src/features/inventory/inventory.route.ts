@@ -11,4 +11,5 @@ router.post("/delete", inventoryController.delete);
 router.post("/adjustStock", inventoryController.adjustStock);
 router.post("/deleteStock", inventoryController.deleteStock);
 router.post("/getAllStocks", inventoryController.getAllStocks);
+router.post("/suggestions", inventoryController.suggestion);
 export default router;

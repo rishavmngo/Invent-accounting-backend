@@ -11,6 +11,25 @@ class InventoryRepository extends BaseRepository {
     super("item");
   }
 
+  async suggestion(word: string, db: DbClient) {
+    try {
+      const query = `SELECT * FROM item WHERE to_tsvector('english', name) @@ to_tsquery('english', $1)`;
+
+      word = word.split(" ").join("_") + ":*";
+
+      const { rows } = await db.query(query, [word]);
+
+      return rows;
+    } catch (error) {
+      logger.error(error);
+
+      throw new AppError(
+        "Error occured in DB while fetching inventory suggestions!",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
   async deleteStock(itemStockId: number, itemId: number, db: DbClient) {
     try {
       // TODO: Add a field to hide instead of delete for better bookeeping

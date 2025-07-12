@@ -6,6 +6,10 @@ import { inventoryRepository } from "./inventory.repository";
 import { ItemForm, ItemInputSchema, ItemStockAddT } from "./inventory.schema";
 
 class InventoryService extends BaseService {
+  async suggestion(query: string) {
+    const db = this.db;
+    return await inventoryRepository.suggestion(query, db);
+  }
   async deleteStock(itemStockId: number, itemId: number) {
     const db = this.db;
     return await inventoryRepository.deleteStock(itemStockId, itemId, db);

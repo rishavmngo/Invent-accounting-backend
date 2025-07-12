@@ -9,6 +9,36 @@ import logger from "../../shared/logger";
 import { AppError } from "../../shared/appError.error";
 
 class InventoryController {
+  async suggestion(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { query } = req.body;
+
+      if (!query) {
+        throw new AppError(
+          "Missing field: query",
+          400,
+          ErrorCode.CONFLICT_ERROR,
+        );
+      }
+
+      const party = await inventoryService.suggestion(query);
+
+      sendSuccess(
+        res,
+        party,
+        "Successfully fetched inventory suggestions ",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
+  }
   async deleteStock(
     req: Request,
     res: Response,
