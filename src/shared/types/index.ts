@@ -2,7 +2,7 @@ import { Pool, PoolClient } from "pg";
 import { z } from "zod";
 
 export const BaseSchema = z.object({
-  id: z.number(),
+  id: z.number().optional().nullable(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });
