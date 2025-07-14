@@ -8,6 +8,28 @@ import { InvoiceSchemaWithoutId } from "./transaction.schema";
 import { transactionService } from "./transaction.service";
 
 class TransactionController {
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      // const invoice = InvoiceSchemaWithoutId.parse(req.body);
+
+      const invoices = await transactionService.getAll(4);
+
+      sendSuccess(
+        res,
+        invoices,
+        "sale added successfully",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      if (error instanceof ZodError) {
+        next(new ValidationError(formatZodError(error)));
+      } else {
+        next(error);
+      }
+    }
+  }
   async addNewSale(
     req: Request,
     res: Response,

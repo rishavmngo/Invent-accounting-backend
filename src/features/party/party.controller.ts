@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { PartyFormSchema, PartySchema } from "./party.schema";
+import { PartyFormSchema } from "./party.schema";
 import logger from "../../shared/logger";
 import { ErrorCode, sendSuccess, SuccessCode } from "../../shared/errorCode";
 import { partyService } from "./party.service";

@@ -1,4 +1,4 @@
-import { nullable, z } from "zod";
+import { z } from "zod";
 
 const dataSchema = z.object({
   customer_name: z.string().optional(),
@@ -34,6 +34,7 @@ export type InvoiceWithoutIdT = z.infer<typeof InvoiceSchemaWithoutId>;
 
 export const InvoiceDbSchema = z.object({
   id: z.number().optional(),
+  owner_id: z.number(),
   party_id: z.number(),
   contact_number: z.string().optional(),
   total_amount: z.number().nullable(),

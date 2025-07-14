@@ -5,6 +5,7 @@ import userRoute from "./features/user/user.route";
 import partyRoute from "./features/party/party.route";
 import transactionRoute from "./features/transaction/transaction.route";
 import inventoryRoute from "./features/inventory/inventory.route";
+import invoiceRoute from "./features/invoice/invoice.route";
 import { configureJwtStrategy } from "./shared/jwtStrategy";
 import passport from "passport";
 import morgan from "morgan";
@@ -50,6 +51,12 @@ app.use(
   "/inventory",
   passport.authenticate("jwt", { session: false }),
   inventoryRoute,
+);
+
+app.use(
+  "/invoice",
+  passport.authenticate("jwt", { session: false }),
+  invoiceRoute,
 );
 
 //error handler middleware
