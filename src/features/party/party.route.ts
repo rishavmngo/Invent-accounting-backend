@@ -8,6 +8,7 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/add", partyController.addNewParty);
+// router.post("/test", partyController.test);
 router.post("/getAllPartiesCardData", partyController.getAllPartiesCardData);
 router.post("/getById", partyController.getPartyById);
 router.post("/delete", partyController.addNewParty);

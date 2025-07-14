@@ -4,7 +4,7 @@ import { ErrorCode } from "../../shared/errorCode";
 import { prepareInsertParts } from "../../shared/helper";
 import logger from "../../shared/logger";
 import { DbClient } from "../../shared/types";
-import { ItemInput, ItemStockAddT } from "./inventory.schema";
+import { Item, ItemInput, ItemStockAddT } from "./inventory.schema";
 
 class InventoryRepository extends BaseRepository {
   constructor() {
@@ -105,6 +105,31 @@ item_id;`;
         "Error occured in DB while fetching  inventory by Id!",
         400,
         ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
+
+  async getOrCreateMany(items: Item[], ownerId: number, db: DbClient) {
+    try {
+      const result: Item[] = [];
+
+      for (const item of items) {
+        if (item.id != null) {
+          // TODO: fetch item by id to check if item exist
+          result.push(item);
+        } else {
+          item.id = await this.insert(item, db);
+          result.push(item);
+        }
+      }
+      return result;
+    } catch (error) {
+      logger.error(error);
+
+      throw new AppError(
+        "Can't able to insert the item",
+        400,
+        ErrorCode.NOT_FOUND,
       );
     }
   }

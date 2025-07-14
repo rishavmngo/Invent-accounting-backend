@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { PartyFormSchema } from "./party.schema";
+import { PartyFormSchema, PartySchema } from "./party.schema";
 import logger from "../../shared/logger";
 import { ErrorCode, sendSuccess, SuccessCode } from "../../shared/errorCode";
 import { partyService } from "./party.service";
@@ -66,6 +66,30 @@ class PartyController {
     }
   }
 
+  // async test(req: Request, res: Response, next: NextFunction): Promise<void> {
+  //   try {
+  //     const partyFormData = PartySchema.parse(req.body);
+  //
+  //     // This user_id need to check the user_id must equal to user_id in token
+  //
+  //     const id = await partyService.test(partyFormData);
+  //
+  //     sendSuccess(
+  //       res,
+  //       { party_id: id },
+  //       "Party added or get successfully",
+  //       SuccessCode.LOGIN_SUCCESS,
+  //     );
+  //     return;
+  //   } catch (error) {
+  //     logger.error(error);
+  //     if (error instanceof ZodError) {
+  //       next(new ValidationError(formatZodError(error)));
+  //     } else {
+  //       next(error);
+  //     }
+  //   }
+  // }
   async addNewParty(
     req: Request,
     res: Response,

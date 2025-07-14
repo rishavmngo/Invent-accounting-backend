@@ -35,7 +35,7 @@ class PartyRepository extends BaseRepository {
     try {
       if (party.id) {
         const fetchedParty = (await this.getPartyById(
-          4,
+          party.user_id,
           party.id,
           db,
         )) as PartyT;

@@ -3,6 +3,7 @@ import cors from "cors";
 import authRoute from "./features/auth/auth.route";
 import userRoute from "./features/user/user.route";
 import partyRoute from "./features/party/party.route";
+import transactionRoute from "./features/transaction/transaction.route";
 import inventoryRoute from "./features/inventory/inventory.route";
 import { configureJwtStrategy } from "./shared/jwtStrategy";
 import passport from "passport";
@@ -38,6 +39,12 @@ app.use("/auth", authRoute);
 app.use("/user", passport.authenticate("jwt", { session: false }), userRoute);
 
 app.use("/party", passport.authenticate("jwt", { session: false }), partyRoute);
+
+app.use(
+  "/transaction",
+  passport.authenticate("jwt", { session: false }),
+  transactionRoute,
+);
 
 app.use(
   "/inventory",

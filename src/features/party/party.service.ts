@@ -12,6 +12,12 @@ class PartyService extends BaseService {
     return partyRepository.insert(newParty, db);
   }
 
+  // async test(party: PartyT) {
+  //   const db = this.db;
+  //
+  //   return partyRepository.getOrCreate(party, db);
+  // }
+
   async getAllPartyCard(userId: number): Promise<PartyT[]> {
     const db = this.db;
     return partyRepository.getAllPartiesCardData(userId, db);
