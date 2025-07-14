@@ -31,6 +31,32 @@ class PartyRepository extends BaseRepository {
     }
   }
 
+  async getOrCreate(party: PartyT, db: DbClient) {
+    try {
+      if (party.id) {
+        const fetchedParty = (await this.getPartyById(
+          4,
+          party.id,
+          db,
+        )) as PartyT;
+        return fetchedParty.id;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, created_at, updated_at, ...insertParty } = party;
+
+      return await this.insert(insertParty as NewPartyT, db);
+    } catch (error) {
+      logger.error(error);
+
+      throw new AppError(
+        "Error occured in DB while fetching party suggestions!",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
+    }
+  }
+
   async getPartyById(
     userId: number,
     partyId: number,
@@ -119,6 +145,7 @@ class PartyRepository extends BaseRepository {
       }
 
       await db.query("COMMIT");
+      return id;
     } catch (error) {
       logger.error(error);
       await db.query("ROLLBACK");
