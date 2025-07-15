@@ -3,6 +3,7 @@ import cors from "cors";
 import authRoute from "./features/auth/auth.route";
 import userRoute from "./features/user/user.route";
 import partyRoute from "./features/party/party.route";
+import settingRoute from "./features/setting/setting.route";
 import transactionRoute from "./features/transaction/transaction.route";
 import inventoryRoute from "./features/inventory/inventory.route";
 import invoiceRoute from "./features/invoice/invoice.route";
@@ -57,6 +58,12 @@ app.use(
   "/invoice",
   passport.authenticate("jwt", { session: false }),
   invoiceRoute,
+);
+
+app.use(
+  "/setting",
+  passport.authenticate("jwt", { session: false }),
+  settingRoute,
 );
 
 //error handler middleware
