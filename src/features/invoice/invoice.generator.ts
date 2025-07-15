@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { InvoiceGenT, ItemGenT } from "./invoice.schema";
 
 function formulaTotalAmount(item: ItemGenT): number {
@@ -43,7 +44,7 @@ export const generateInvoiceHTML = (data: InvoiceGenT): string => {
         </div>
         <div class="text-right">
           <h1 class="text-3xl font-bold text-red-600 uppercase">Sale</h1>
-          <p class="text-sm mt-2">Date: ${data.created_at || new Date().toLocaleDateString()}</p>
+          <p class="text-sm mt-2">Date: ${format(data.created_at || new Date(), "dd MMM yyyy, h:mm a")}</p>
           <!-- <p class="text-sm">PO #: ${data || "N/A"}</p> -->
         </div>
       </div>

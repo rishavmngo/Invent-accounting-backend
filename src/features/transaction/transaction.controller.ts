@@ -6,17 +6,21 @@ import { ValidationError } from "../../shared/execeptions/ValidationError";
 import { formatZodError } from "../../shared/helper";
 import { InvoiceSchemaWithoutId } from "./transaction.schema";
 import { transactionService } from "./transaction.service";
+import { AppError } from "../../shared/appError.error";
 
 class TransactionController {
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // const invoice = InvoiceSchemaWithoutId.parse(req.body);
-
-      const invoices = await transactionService.getAll(4);
+      const { user_id } = req.body;
+      if (!user_id) {
+        throw new AppError("Missing field: user_id");
+      }
+      const invoices = await transactionService.getAll(user_id);
 
       sendSuccess(
         res,
-        invoices,
+        Object.values(invoices),
         "sale added successfully",
         SuccessCode.LOGIN_SUCCESS,
       );
