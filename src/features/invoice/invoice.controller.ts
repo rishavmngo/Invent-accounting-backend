@@ -3,17 +3,21 @@ import puppeteer from "puppeteer";
 import { generateInvoiceHTML } from "./invoice.generator";
 // import { data } from "../../shared/fakeData";
 import { transactionService } from "../transaction/transaction.service";
+import { AppError } from "../../shared/appError.error";
 
 class InvoiceController {
   async generate(req: Request, res: Response): Promise<void> {
-    // const invoiceData = req.body;
+    const { user_id, invoice_id } = req.body;
 
     try {
-      const data = await transactionService.getById(4, 2);
+      if (!user_id || !invoice_id) {
+        throw new AppError("Missing important fields");
+      }
+      const data = await transactionService.getById(user_id, invoice_id);
       console.log(data);
 
       const html = generateInvoiceHTML(data);
-      const browser = await puppeteer.launch({ headless: false }); // set headless: false if debugging
+      const browser = await puppeteer.launch({ headless: true }); // set headless: false if debugging
       const page = await browser.newPage();
 
       await page.setContent(html, { waitUntil: "networkidle0" });
