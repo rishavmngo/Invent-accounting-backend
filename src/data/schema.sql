@@ -1,15 +1,14 @@
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP
-);
-
+create table sessions(
+id UUID primary key,
+user_id integer,
+expirty_date timestamp not null,
+constraint fk_user_session
+	foreign key(user_id)
+	references users(id)
+	on delete cascade
+)
 
 CREATE TYPE stock_transaction_type AS ENUM ('add', 'reduce', 'sale', 'purchase', 'open','payable','receivable');
-
 CREATE TABLE party(
 id serial PRIMARY KEY,
 user_id integer NOT NULL,
@@ -67,7 +66,6 @@ CONSTRAINT fk_user_item
 )
 
 
-
 CREATE TABLE item_stock(
 id SERIAL PRIMARY KEY,
 item_id integer NOT NULL,
@@ -103,8 +101,9 @@ item_id;
 
 CREATE TABLE invoice(
 id SERIAL PRIMARY KEY,
+owner_id integer NOT NULL,
 party_id integer NOT NULL,
-contact_number integer,
+contact_number varchar(12),
 total_amount integer,
 paid_amount integer,
 full_paid boolean,
@@ -114,7 +113,11 @@ updated_at TIMESTAMP,
 CONSTRAINT fk_party_invoice
 	FOREIGN KEY(party_id)
 	REFERENCES party(id)
-	ON DELETE CASCADE 
+	ON DELETE CASCADE,
+CONSTRAINT fk_users_invoice
+	FOREIGN KEY(owner_id)
+	REFERENCES users(id)
+	ON DELETE CASCADE
 )
 
 CREATE TABLE invoice_item(
@@ -136,3 +139,31 @@ CONSTRAINT fk_item_invoice_item
 	REFERENCES item(id)
 	ON DELETE CASCADE
 )
+
+
+SELECT 
+  i.id AS invoice_id,
+  i.owner_id,
+  i.customer_id,
+  i.total_amount,
+  i.created_at,
+  p.id AS party_id,
+  p.name AS party_name,
+  p.contact_number  AS party_contact,
+  ii.item_id,
+  it.name AS item_name,
+  ii.price_per_unit,
+  ii.quantity,
+  ii.discount,
+  ii.tax 
+FROM invoice i 
+LEFT JOIN invoice_item ii ON i.id = ii.invoice_id
+LEFT JOIN party p  ON p.id = i.id
+LEFT JOIN item it ON it.id = ii.item_id 
+WHERE i.owner_id = 4
+ORDER BY i.id;
+
+
+
+
+
