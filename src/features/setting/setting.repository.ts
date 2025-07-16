@@ -106,7 +106,7 @@ class SettingRepository extends BaseRepository {
     }
   }
   async update(settings: SettingsT, db: DbClient) {
-    const { keys, values, placeholder } = this.prepareUpdateParts(settings, [
+    const { values, placeholder } = this.prepareUpdateParts(settings, [
       "id",
       "owner_id",
     ]);
@@ -116,13 +116,6 @@ class SettingRepository extends BaseRepository {
                       where id=$1
 `;
       await db.query(query, [settings.id, ...values]);
-      // if (rows.length < 1) {
-      //   throw new AppError(
-      //     "Can't able",
-      //     400,
-      //     ErrorCode.UNEXPECTED_ERROR,
-      //   );
-      // }
     } catch (error) {
       logger.error(error);
       throw new AppError(
