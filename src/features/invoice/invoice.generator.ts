@@ -26,7 +26,124 @@ function calculateTotalAmount(items: ItemGenT[]) {
   return amt;
 }
 
-const bodyTemplate = `
+export const bodyTemplate1 = `
+<div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+  <!-- Header with gradient background -->
+  <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-8">
+    <div class="flex justify-between items-start">
+      <div class="space-y-2">
+        <h2 class="text-2xl font-bold">{{owner_name}}</h2>
+        <div class="space-y-1 text-blue-100">
+          <p class="flex items-center gap-2 text-sm">
+            <i data-feather="map-pin" class="w-4 h-4"></i> 
+            Gm building, Greater patna
+          </p>
+          <p class="flex items-center gap-2 text-sm">
+            <i data-feather="phone" class="w-4 h-4"></i>
+            +91 xxxxxxx
+          </p>
+          <p class="flex items-center gap-2 text-sm">
+            <i data-feather="globe" class="w-4 h-4"></i>
+            example.com
+          </p>
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="bg-white text-blue-800 px-6 py-3 rounded-lg shadow-md">
+          <h1 class="text-3xl font-bold">INVOICE</h1>
+          <p class="text-sm mt-1 text-blue-600">{{formatted_date}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content area -->
+  <div class="p-8">
+    <!-- Customer Section -->
+    <div class="mb-8">
+      <div class="bg-gray-50 rounded-lg p-6 border-l-4 border-blue-600">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <i data-feather="user" class="w-5 h-5 text-blue-600"></i>
+          Bill To
+        </h3>
+        <div class="space-y-2 text-gray-700">
+          <p class="font-medium text-lg">{{customer_name}}</p>
+          <p class="text-sm">{{customer_billing_address}}</p>
+          <p class="text-sm flex items-center gap-2">
+            <i data-feather="phone" class="w-4 h-4 text-gray-500"></i> 
+            {{customer_contact_number}}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items Table -->
+    <div class="mb-8 overflow-hidden rounded-lg border border-gray-200">
+      <table class="w-full">
+        <thead class="bg-blue-600 text-white">
+          <tr>
+            <th class="px-4 py-3 text-left font-medium">#</th>
+            <th class="px-4 py-3 text-left font-medium">Description</th>
+            <th class="px-4 py-3 text-left font-medium">Qty</th>
+            <th class="px-4 py-3 text-left font-medium">Rate</th>
+            <th class="px-4 py-3 text-left font-medium">Discount</th>
+            <th class="px-4 py-3 text-left font-medium">GST</th>
+            <th class="px-4 py-3 text-left font-medium">Amount</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {{#items}}
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm text-gray-900">{{order}}</td>
+            <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{name}}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">{{quantity}}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">₹{{price_per_unit}}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">₹{{discount}}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">₹{{tax}}</td>
+            <td class="px-4 py-3 text-sm text-gray-900 font-semibold">₹{{total}}</td>
+          </tr>
+          {{/items}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Comments + Total -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Comments Section -->
+      <div class="space-y-3">
+        <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+          <i data-feather="message-circle" class="w-4 h-4 text-blue-600"></i>
+          Comments & Instructions
+        </h4>
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-24 bg-gray-50">
+          <p class="text-sm text-gray-500 italic">Add any special instructions or comments here...</p>
+        </div>
+      </div>
+
+      <!-- Total Section -->
+      <div class="space-y-3">
+        <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <div class="space-y-3">
+            <div class="bg-blue-600 text-white rounded-lg p-4 flex justify-between items-center">
+              <span class="text-lg font-semibold">Total Amount</span>
+              <span class="text-2xl font-bold">₹{{total_amount}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 pt-6 border-t border-gray-200">
+      <p class="text-center text-sm text-gray-500">
+        Thank you for your business! • Questions? Contact us at example.com
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+export const bodyTemplate = `
     <div class="max-w-4xl mx-auto border border-gray-300 p-8 shadow-md">
       <!-- Header -->
       <div class="flex justify-between items-start mb-8">
@@ -167,7 +284,7 @@ export const generateInvoiceHTML = (data: InvoiceGenT): string => {
       <div class="grid grid-cols-2 gap-4 border-t border-b border-gray-300 py-4 mb-6">
         <div>
           <h3 class="bg-red-600 text-white px-3 py-1 text-sm font-semibold inline-block mb-2">CUSTOMER</h3>
-          <p class="text-sm font-medium">${data.customer.name}</p>
+          <p class="text-md font-medium">${data.customer.name}</p>
           <p class="text-sm">${data.customer.billing_address}</p>
           <p class="text-sm flex items-center gap-2">
             <i data-feather="phone" class="w-4 h-4 text-gray-500"></i> ${data.customer.contact_number}

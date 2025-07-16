@@ -7,10 +7,10 @@ export const data: InvoiceGenT = {
   total_amount: 8100,
   customer: {
     id: 3,
-    name: "abc electrnoics",
+    name: "abc electronics",
     billing_address: "Sephant tower Hauz Khas, New Delhi, Delhi 110016",
     email_address: "something@invent.com",
-    contact_number: "",
+    contact_number: "+91 xxx-xxx-xxx",
   },
   created_at: new Date("2025-07-14T12:49:03.854Z"),
   items: [
