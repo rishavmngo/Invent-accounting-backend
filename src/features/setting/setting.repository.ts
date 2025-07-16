@@ -152,9 +152,9 @@ class SettingRepository extends BaseRepository {
       const { rows } = await db.query(query, [id]);
 
       if (rows.length < 1) {
-        return -1;
+        return null;
       }
-      return rows[0].id;
+      return rows[0];
     } catch (error) {
       logger.error(error);
 

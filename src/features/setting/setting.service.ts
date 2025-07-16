@@ -1,4 +1,5 @@
 import BaseService from "../../shared/base.service";
+import { deleteUploadFile } from "../../shared/deleteUploadFile";
 import logger from "../../shared/logger";
 import { generateInvoiceThumnail } from "./setting.generators";
 import { settingRepository } from "./setting.repository";
@@ -14,8 +15,11 @@ class SettingService extends BaseService {
     const db = this.db;
 
     try {
-      const id = await settingRepository.existOrNot(ownerId, db);
-      if (id == -1) {
+      const setting = (await settingRepository.existOrNot(
+        ownerId,
+        db,
+      )) as SettingsT;
+      if (!setting) {
         const settings: SettingsWithoutIdT = {
           logo_url: url,
           owner_id: ownerId,
@@ -32,11 +36,16 @@ class SettingService extends BaseService {
         await settingRepository.insert(settings, db);
         return;
       }
-      const settings: SettingsT = await settingRepository.getById(id, db);
+      const settings: SettingsT = await settingRepository.getById(
+        setting.id,
+        db,
+      );
 
+      const old_url = settings.logo_url;
       settings.logo_url = url;
 
       await settingRepository.update(settings, db);
+      if (old_url) deleteUploadFile(old_url);
       return;
     } catch (error) {
       logger.error(error);
