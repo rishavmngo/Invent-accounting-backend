@@ -1,9 +1,11 @@
 import BaseService from "../../shared/base.service";
 import logger from "../../shared/logger";
+import { generateInvoiceThumnail } from "./setting.generators";
 import { settingRepository } from "./setting.repository";
 import {
   SettingsT,
   SettingsWithoutIdT,
+  TemplateT,
   TemplateWithoutIdT,
 } from "./setting.schema";
 
@@ -44,6 +46,21 @@ class SettingService extends BaseService {
   async getAllTemplate() {
     const db = this.db;
     return await settingRepository.getAllTemplate(db);
+  }
+  async updateTemplateThumbnail(id: number) {
+    try {
+      const db = this.db;
+      const template = (await settingRepository.getTemplateById(
+        id,
+        db,
+      )) as TemplateT;
+      const path = await generateInvoiceThumnail(template);
+      template.thumbnail = path;
+      await settingRepository.updateTemplateThumbanil(template, db);
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
   }
 
   async getTemplateById(id: number) {

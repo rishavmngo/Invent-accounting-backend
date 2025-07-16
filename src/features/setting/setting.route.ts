@@ -51,5 +51,9 @@ router.post("/template/add", settingController.addTemplate);
 router.post("/template/getAll", settingController.getAllTemplates);
 router.post("/template/getById", settingController.getTemplateById);
 router.post("/template/generate", settingController.generate);
+router.post(
+  "/template/thumbnailUpdate",
+  settingController.updateTemplateThumbnail,
+);
 
 export default router;

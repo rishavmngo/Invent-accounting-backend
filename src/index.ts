@@ -64,7 +64,7 @@ app.use(
 
 app.use(
   "/setting",
-  // passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   settingRoute,
 );
 

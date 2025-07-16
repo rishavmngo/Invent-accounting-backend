@@ -94,6 +94,7 @@ class SettingController {
       }
     }
   }
+
   async addTemplate(
     req: Request,
     res: Response,
@@ -108,6 +109,36 @@ class SettingController {
         res,
         { id: id },
         "Template added sucessfull",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      if (error instanceof ZodError) {
+        next(new ValidationError(formatZodError(error)));
+      } else {
+        next(error);
+      }
+    }
+  }
+  async updateTemplateThumbnail(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { template_id } = req.body;
+
+      if (!template_id) {
+        throw new AppError("Missing fields: template_id");
+      }
+
+      await settingService.updateTemplateThumbnail(template_id);
+
+      sendSuccess(
+        res,
+        {},
+        "Template thumbnail updated sucessfull",
         SuccessCode.LOGIN_SUCCESS,
       );
       return;

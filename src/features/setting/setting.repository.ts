@@ -7,6 +7,7 @@ import { DbClient } from "../../shared/types";
 import {
   SettingsT,
   SettingsWithoutIdT,
+  TemplateT,
   TemplateWithoutIdT,
 } from "./setting.schema";
 
@@ -92,6 +93,18 @@ class SettingRepository extends BaseRepository {
     return { keys, values, placeholder };
   }
 
+  async updateTemplateThumbanil(template: TemplateT, db: DbClient) {
+    try {
+      const query = `UPDATE templates
+                      set thumbnail=$2
+                      where id=$1
+`;
+      await db.query(query, [template.id, template.thumbnail]);
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
+  }
   async update(settings: SettingsT, db: DbClient) {
     const { keys, values, placeholder } = this.prepareUpdateParts(settings, [
       "id",
