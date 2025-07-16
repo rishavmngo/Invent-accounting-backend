@@ -3,12 +3,7 @@ import { Router } from "express";
 
 import { authController } from "./auth.controller";
 import passport from "passport";
-import {
-  bodyTemplate,
-  bodyTemplate1,
-  generateInvoice,
-  generateInvoiceHTML,
-} from "../invoice/invoice.generator";
+import { bodyTemplate, generateInvoice } from "../invoice/invoice.generator";
 import { data } from "../../shared/fakeData";
 
 const router = Router();
@@ -18,7 +13,7 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.get("/preview", (req, res) => {
-  const html = generateInvoice(data, bodyTemplate1);
+  const html = generateInvoice(data, bodyTemplate);
   res.send(html);
 });
 router.post("/register", authController.register);
