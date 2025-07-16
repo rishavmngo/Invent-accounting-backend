@@ -10,7 +10,6 @@ import { TemplateT, TemplateWithoutIdSchema } from "./setting.schema";
 import { transactionService } from "../transaction/transaction.service";
 import { generateInvoice } from "../invoice/invoice.generator";
 import puppeteer from "puppeteer";
-import { data } from "../../shared/fakeData";
 
 class SettingController {
   async getAllTemplates(
@@ -65,6 +64,36 @@ class SettingController {
     }
   }
 
+  async getByOwnerId(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { user_id } = req.body;
+
+      if (!user_id) {
+        throw new AppError("Missing field: user_id");
+      }
+
+      const settings = await settingService.getByOwnerId(user_id);
+
+      sendSuccess(
+        res,
+        settings,
+        "Settings fetched sucessfully",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      if (error instanceof ZodError) {
+        next(new ValidationError(formatZodError(error)));
+      } else {
+        next(error);
+      }
+    }
+  }
   async addTemplate(
     req: Request,
     res: Response,

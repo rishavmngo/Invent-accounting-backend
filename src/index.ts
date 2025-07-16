@@ -12,6 +12,7 @@ import passport from "passport";
 import morgan from "morgan";
 import logger from "./shared/logger";
 import { errorHandler } from "./shared/errorHandler.error";
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,6 +36,7 @@ app.use(express.json());
 configureJwtStrategy(passport);
 app.use(passport.initialize());
 
+app.use("/uploads", express.static(path.join(process.cwd(), "public/uploads")));
 //routes
 app.use("/auth", authRoute);
 
@@ -62,7 +64,7 @@ app.use(
 
 app.use(
   "/setting",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   settingRoute,
 );
 
