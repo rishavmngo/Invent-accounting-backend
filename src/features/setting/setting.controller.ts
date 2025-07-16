@@ -6,7 +6,11 @@ import { AppError } from "../../shared/appError.error";
 import { ZodError } from "zod";
 import { ValidationError } from "../../shared/execeptions/ValidationError";
 import { formatZodError } from "../../shared/helper";
-import { TemplateT, TemplateWithoutIdSchema } from "./setting.schema";
+import {
+  SettingsSchema,
+  TemplateT,
+  TemplateWithoutIdSchema,
+} from "./setting.schema";
 import { transactionService } from "../transaction/transaction.service";
 import { generateInvoice } from "../invoice/invoice.generator";
 import puppeteer from "puppeteer";
@@ -121,6 +125,34 @@ class SettingController {
       }
     }
   }
+
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const settings = SettingsSchema.parse(req.body);
+
+      // if (!template_id) {
+      //   throw new AppError("Missing fields: template_id");
+      // }
+
+      await settingService.update(settings);
+
+      sendSuccess(
+        res,
+        {},
+        "Settings updated sucessfull",
+        SuccessCode.LOGIN_SUCCESS,
+      );
+      return;
+    } catch (error) {
+      logger.error(error);
+      if (error instanceof ZodError) {
+        next(new ValidationError(formatZodError(error)));
+      } else {
+        next(error);
+      }
+    }
+  }
+
   async updateTemplateThumbnail(
     req: Request,
     res: Response,
@@ -161,11 +193,12 @@ class SettingController {
       }
       const invoice = await transactionService.getById(user_id, invoice_id);
 
-      const templateData = (await settingService.getTemplateById(
-        3,
-      )) as TemplateT;
+      const settings = await settingService.getByOwnerId(user_id);
+      const template_id = settings?.template_id ? settings.template_id : 3;
 
-      // console.log(templateData);
+      const templateData = (await settingService.getTemplateById(
+        template_id,
+      )) as TemplateT;
 
       const html = generateInvoice(invoice, templateData.template);
       const browser = await puppeteer.launch({ headless: true }); // set headless: false if debugging

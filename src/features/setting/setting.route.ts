@@ -46,6 +46,7 @@ router.post("/upload-logo", upload.single("logo"), async (req, res, next) => {
 });
 
 router.post("/getByOwnerId", settingController.getByOwnerId);
+router.post("/update", settingController.update);
 
 router.post("/template/add", settingController.addTemplate);
 router.post("/template/getAll", settingController.getAllTemplates);

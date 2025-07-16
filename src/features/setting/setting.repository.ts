@@ -115,11 +115,21 @@ class SettingRepository extends BaseRepository {
                       set ${placeholder} 
                       where id=$1
 `;
-      console.log(keys, values, placeholder);
       await db.query(query, [settings.id, ...values]);
+      // if (rows.length < 1) {
+      //   throw new AppError(
+      //     "Can't able",
+      //     400,
+      //     ErrorCode.UNEXPECTED_ERROR,
+      //   );
+      // }
     } catch (error) {
       logger.error(error);
-      throw error;
+      throw new AppError(
+        "Error occured in DB while updating settings",
+        400,
+        ErrorCode.UNEXPECTED_ERROR,
+      );
     }
   }
 

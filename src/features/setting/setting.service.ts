@@ -86,7 +86,7 @@ class SettingService extends BaseService {
     return await settingRepository.insert(settings, db);
   }
 
-  async getByOwnerId(ownerId: number) {
+  async getByOwnerId(ownerId: number): Promise<SettingsT | null> {
     const db = this.db;
     return await settingRepository.getByOwnerId(ownerId, db);
   }
