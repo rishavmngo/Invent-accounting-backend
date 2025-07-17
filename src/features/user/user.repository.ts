@@ -40,7 +40,7 @@ class UserRepository extends BaseRepository {
         user.name,
         user.password,
       ]);
-      return rows[0].id ?? 0;
+      return rows[0].id;
     } catch (error) {
       console.error(error);
       throw new DatabaseError();
