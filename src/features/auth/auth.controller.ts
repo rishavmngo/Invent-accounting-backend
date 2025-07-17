@@ -13,6 +13,8 @@ import logger from "../../shared/logger";
 import { AuthError } from "../../shared/execeptions/AuthError";
 import { ConflictError } from "../../shared/execeptions/ConflictError";
 import { AppError } from "../../shared/appError.error";
+import { settingService } from "../setting/setting.service";
+import { SettingsWithoutIdT } from "../setting/setting.schema";
 
 class AuthController {
   async register(
@@ -47,9 +49,25 @@ class AuthController {
         password: hashedPassword,
       };
 
-      const user = await userService.addUser(userWithHashedPassword);
+      const id = await userService.addUser(userWithHashedPassword);
 
-      const accessToken = jwtService.generateAccessToken(user.id);
+      const settings: SettingsWithoutIdT = {
+        logo_url: null,
+        owner_id: id,
+        template_id: 3,
+        dark_mode: false,
+        name: null,
+        contact_number: null,
+        address: null,
+        website: null,
+        signature_url: null,
+        created_at: null,
+        updated_at: null,
+      };
+      await settingService.add(settings);
+
+      const accessToken = jwtService.generateAccessToken(id);
+      console.log("access token", accessToken);
       sendSuccess(
         res,
         { token: accessToken },
