@@ -166,4 +166,36 @@ ORDER BY i.id;
 
 
 
+CREATE TABLE templates(
+	id SERIAL PRIMARY KEY,
+	name varchar(50),
+	thumbnail text,
+	template text,
+	premium boolean,
+	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMP
+)
 
+
+CREATE TABLE settings(
+	id SERIAL PRIMARY KEY,
+	owner_id integer,
+	logo_url text,
+	template_id integer,
+	dark_mode boolean,
+	name varchar(100),
+	contact_number varchar(12),
+	address text,
+	website text,
+	signature_url text,
+	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMP,
+	CONSTRAINT fk_users_settings
+		FOREIGN KEY(owner_id)
+		REFERENCES users(id)
+		ON DELETE CASCADE,
+	CONSTRAINT fk_templates_settings
+		FOREIGN KEY(template_id)
+		REFERENCES templates(id)
+		ON DELETE CASCADE
+)
